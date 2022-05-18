@@ -8,7 +8,9 @@ Feature: Authorization by Deputy commissioner
     And click on Queues
     Then switch to frame0
     And enters VAT FREE reference number in search results
+    And click checkbox in case number
     Then click pick button dropdown
+    Then switch to frame0
     Then Click on reference number
     Then VAT FREE status should be "Awaiting Authorisation"
     Then switch to frame1

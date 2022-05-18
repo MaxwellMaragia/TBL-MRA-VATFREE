@@ -23,10 +23,9 @@ import java.io.IOException;
 
 
 public class TestRunner{
+
 	public TestRunner(sharedatastep sharedata) {
-
 		stepDefinitions.sharedata = sharedata;
-
 	}
 
 	@AfterClass

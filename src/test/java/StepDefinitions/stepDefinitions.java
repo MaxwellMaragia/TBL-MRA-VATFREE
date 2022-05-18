@@ -1,53 +1,29 @@
 package StepDefinitions;
 
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.security.Key;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-
-import gherkin.lexer.Th;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.en_old.Ac;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.math3.analysis.function.Exp;
-import org.apache.poi.ss.formula.functions.Na;
-import org.junit.Assert;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import Utils.BaseClass;
-
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.junit.Cucumber;
+import org.junit.Assert;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import com.github.javafaker.Faker;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.Timestamp;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 
 @RunWith(Cucumber.class)
@@ -60,10 +36,7 @@ public class stepDefinitions extends BaseClass  {
 
     public static sharedatastep sharedata;
     public String ReferenceNumber = "MANP/000002433/2020";
-    public String Name = "";
-    public String FirstName = "";
-    public String SecondName = "";
-    public String Email = "";
+    Faker faker = new Faker();
 
 
     public stepDefinitions(sharedatastep sharedata) {
@@ -290,6 +263,18 @@ public class stepDefinitions extends BaseClass  {
         wait(10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[span='VAT Free Project Application']"))).click();
     }
 
+    @And("Click on Vat Free Projects > Maintain Vat Free Project")
+    public void clickOnVatFreeProjectsMaintainVatFreeProject() {
+        wait(10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[span='VAT Free Projects']"))).click();
+        wait(10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[span='Maintain VAT Free Project']"))).click();
+    }
+
+    @And("Click on Vat Free Projects > Create Vat five tax certificate application")
+    public void clickOnVatFreeProjectsCreateVatTaxCertificateApplication() {
+        wait(10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[span='VAT Free Projects']"))).click();
+        wait(10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[span='Create VAT 5 Tax Certificate Application']"))).click();
+    }
+
     @Then("Enter project owner details with tin {string}")
     public void enterProjectOwnerDetailsWithTin(String arg0) throws InterruptedException {
         wait(20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[span='Find']"))).click();
@@ -330,7 +315,9 @@ public class stepDefinitions extends BaseClass  {
 
     @Then("Add project details")
     public void addProjectDetails() throws Throwable{
-        driver.findElement(By.id("VatFreeProjectApplication:ProjectName")).sendKeys("Project name : "+getRandom(5));
+        sharedatastep.ProjectName = faker.company().name();
+        System.out.println("Project name: "+sharedatastep.ProjectName);
+        driver.findElement(By.id("VatFreeProjectApplication:ProjectName")).sendKeys(sharedatastep.ProjectName);
         Thread.sleep(300);
         driver.findElement(By.id("VatFreeProjectApplication:ValueOfProject_input")).sendKeys("2000000");
         Thread.sleep(300);
@@ -370,7 +357,7 @@ public class stepDefinitions extends BaseClass  {
         Thread.sleep(500);
         driver.findElement(By.id("VatFreeItem:UnitPrice_input")).sendKeys("5000");
         Thread.sleep(500);
-        driver.findElement(By.id("VatFreeItem:Quantity_input")).sendKeys("400");
+        driver.findElement(By.id("VatFreeItem:Quantity_input")).sendKeys("1000");
         Thread.sleep(500);
         driver.findElement(By.id("VatFreeItem:Value_input")).sendKeys("2000000");
         Thread.sleep(500);
@@ -400,7 +387,7 @@ public class stepDefinitions extends BaseClass  {
         driver.findElement(By.id("SearchForm:j_idt21")).click();
         Thread.sleep(1000);
         switchToDefault();
-        Thread.sleep(6000);
+        Thread.sleep(3000);
     }
 
     @Then("Enter details of authorizing officials with tin {string}")
@@ -443,6 +430,25 @@ public class stepDefinitions extends BaseClass  {
         driver.findElement(By.id("AttachmentDetails:Ok")).click();
         switchToDefault();
         wait(50).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[text()='Agreement with Malawi Government']"))).isDisplayed();
+    }
+
+    @Then("Update attachment for VAT free project application")
+    public void updateAttachmentForVATFreeProjectApplication() throws InterruptedException {
+        Thread.sleep(1000);
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("VatFreeProject:attachmentTable:Editttachent"))).click();
+        switchToBoFrame();
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"AttachmentDetails:DocType\"]/div[3]"))).click();
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//li[text()='Contract Documents']")).click();
+        Thread.sleep(800);
+        driver.findElement(By.id("AttachmentDetails:DocumentName")).sendKeys("Attachment");
+        String path = System.getProperty("user.dir") + File.separator + "src\\test\\resources\\" + File.separator + "test.png";
+        Thread.sleep(300);
+        driver.findElement(By.id("AttachmentDetails:AttachmentPath_input")).sendKeys(path);
+        Thread.sleep(300);
+        driver.findElement(By.id("AttachmentDetails:Ok")).click();
+        switchToDefault();
+        wait(50).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[text()='Contract Documents']"))).isDisplayed();
     }
 
     @Then("Enter qualifications for certifier")
@@ -506,14 +512,23 @@ public class stepDefinitions extends BaseClass  {
         WebElement search = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("crmGrid_findCriteria")));
 
         search.clear();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
-        //search.sendKeys("*IN/000036357/2022");
-        search.sendKeys("*"+sharedatastep.Ref);
+        search.sendKeys("*VF00000077");
+//        search.sendKeys("*"+sharedatastep.Ref);
         Thread.sleep(5000);
         search.sendKeys(Keys.ENTER);
 
         Thread.sleep(1000);
+    }
+
+    @And("click checkbox in case number")
+    public void clickCheckboxInCaseNumber() throws InterruptedException {
+        Thread.sleep(4000);
+        WebElement pickCheckBox = driver.findElement(By.xpath("//input[@type='checkbox']"));
+        Actions actions = new Actions(driver);
+        actions.click(pickCheckBox).perform();
+        driver.switchTo().defaultContent();
     }
 
     @Then("VAT FREE status should be {string}")
@@ -530,6 +545,16 @@ public class stepDefinitions extends BaseClass  {
     public void waitForPlanToLoad(String arg0) {
         WebDriverWait wait = new WebDriverWait(driver, 200);
         WebElement frame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("WebResource_VATFreeProjectApplicationAngular")));
+
+        driver.switchTo().frame(frame);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()='" + arg0 + "']")));
+    }
+
+    @And("wait for plan to load for vat five {string}")
+    public void waitForPlanToLoadVatFive(String arg0) {
+        WebDriverWait wait = new WebDriverWait(driver, 200);
+        WebElement frame = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("WebResource_TaxpayerServiceApplicationAngular")));
+
         driver.switchTo().frame(frame);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()='" + arg0 + "']")));
     }
@@ -567,6 +592,21 @@ public class stepDefinitions extends BaseClass  {
         driver.findElement(By.xpath("//*[@id=\"id_vatFreeApplicantForm\"]/div[4]/tb-input-text-area[2]/div/div[2]/div/textarea")).sendKeys("Recommendations");
     }
 
+
+    @Then("Enter CG notes")
+    public void enterCGNotes() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//*[@id=\"id_vatFreeApplicantForm\"]/div[5]/tb-input-text-area/div/div[2]/div/textarea")).sendKeys("Notes");
+        Thread.sleep(1000);
+    }
+
+    @Then("Enter officer recommendation remarks")
+    public void enterOfficerRecommendationRemarks() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-taxpayer-services/div/app-vat5-certificate/div/form/div/div[2]/tb-input-text-area/div/div[2]/div/textarea")).sendKeys("Notes and recommendations");
+        Thread.sleep(1000);
+    }
+
     @Then("Select status as send for approval")
     public void selectStatusAsSendForApproval() throws Throwable {
         driver.switchTo().defaultContent();
@@ -577,6 +617,305 @@ public class stepDefinitions extends BaseClass  {
         driver.findElement(By.xpath("//div[@data-attributename='tbg_dctechnicalapproval']")).click();
         Actions action = new Actions(driver);
         action.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+    }
+
+    @Then("Select status as approved")
+    public void selectStatusAsApproved() throws Throwable {
+        driver.switchTo().defaultContent();
+
+        switch_to_frame1();
+        Thread.sleep(1500);
+
+        driver.findElement(By.xpath("//div[@data-attributename='tbg_commissionergeneralapproval']")).click();
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(2000);
+    }
+
+    @Then("Validate certificate application")
+    public void validateCertificateApplication() throws Throwable {
+        driver.switchTo().defaultContent();
+
+        switch_to_frame1();
+        Thread.sleep(1500);
+
+        driver.findElement(By.xpath("//div[@data-attributename='tbg_revenueofficerapproval']")).click();
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(2000);
+    }
+
+    @Then("Approve vat five certificate application")
+    public void approveVatFiveCertificateApplication() throws Throwable {
+        driver.switchTo().defaultContent();
+
+        switch_to_frame1();
+        Thread.sleep(1500);
+
+        driver.findElement(By.xpath("//div[@data-attributename='tbg_supervisorapproval']")).click();
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ARROW_UP).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(2000);
+    }
+
+    @Then("Select status as approved and enter expiry date")
+    public void selectStatusAsApprovedAndEnterDate() throws Throwable {
+        driver.switchTo().defaultContent();
+
+        switch_to_frame1();
+        Thread.sleep(1500);
+
+        driver.findElement(By.xpath("//div[@data-attributename='tbg_commissionergeneralapproval']")).click();
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(2000);
+        driver.findElement(By.id("header_process_tbg_expirydate")).click();
+        Thread.sleep(500);
+        driver.findElement(By.id("header_process_tbg_expirydate_iDateInput")).sendKeys(tomorrowsDate());
+
+    }
+
+    @Then("Enter project name and search")
+    public void enterProjectNameAndSearch() throws InterruptedException {
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("SearchForm:ProjectName"))).sendKeys(sharedatastep.ProjectName);
+//        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("SearchForm:ProjectName"))).sendKeys("Kreiger Group");
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//button[span='Search']")).click();
+        wait(60).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()='"+sharedatastep.ProjectName+"']")));
+//        wait(60).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()='Kreiger Group']")));
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//button[span='Edit']")).click();
+    }
+
+    @Then("Select reason for edit")
+    public void selectReasonForEdit() throws InterruptedException {
+        driver.findElement(By.xpath("//*[@id=\"VatFreeProject:UpdateReason\"]/div[3]")).click();
+        Thread.sleep(500);
+        actions.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+    }
+
+
+    @Then("Enter purchaser details with tin {string}")
+    public void enterPurchaserDetailsWithTin(String arg0) throws InterruptedException {
+        wait(20).until(ExpectedConditions.visibilityOfElementLocated(By.id("VatFiveTaxCertificateApplication:findPurchaser"))).click();
+        switchToBoFrame();
+        wait(20).until(ExpectedConditions.visibilityOfElementLocated(By.id("SearchForm:accountNumber"))).sendKeys(arg0);
+        Thread.sleep(300);
+        driver.findElement(By.xpath("//button[span='Search']")).click();
+        switchToDefault();
+        Thread.sleep(2000);
+    }
+
+    @Then("Enter supplier details for VAT certificate {string}")
+    public void enterSupplierDetailsForVATCertificate(String arg0) throws InterruptedException {
+        Thread.sleep(1000);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:findSupplier")).click();
+        switchToBoFrame();
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("SearchForm:accountNumber"))).sendKeys(arg0);
+        Thread.sleep(500);
+        driver.findElement(By.id("SearchForm:j_idt21")).click();
+        Thread.sleep(1000);
+        switchToDefault();
+        Thread.sleep(3000);
+    }
+
+
+    @Then("Obtain project id")
+    public void obtainProjectId() throws InterruptedException {
+        WebElement idField = wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("VatFreeProject:ProjectId")));
+        Thread.sleep(1000);
+        sharedatastep.projectId = idField.getAttribute("value");
+        System.out.println("Project ID="+sharedatastep.projectId);
+    }
+
+    @Then("Enter Vat free project number")
+    public void enterVatFreeProjectNumber() {
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:VatFreeProjectNo")).sendKeys(sharedatastep.projectId);
+//        driver.findElement(By.id("VatFiveTaxCertificateApplication:VatFreeProjectNo")).sendKeys("VATF/00000011/2022");
+    }
+
+    @Then("Select bill of quantities as goods for vat five")
+    public void selectBillOfQuantitiesAsGoodsForVatFive() {
+        driver.findElement(By.xpath("//*[@id=\"VatFiveTaxCertificateApplication:Goods\"]/div[2]")).click();
+    }
+
+    @Then("Click add under bill of quantities for vat five")
+    public void clickAddUnderBillOfQuantitiesForVatFive() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:goodsAndServicesTable:AddGS")).click();
+
+    }
+
+    @Then("Enter Vat free goods and services details for vat five")
+    public void enterVatFreeGoodsAndServicesDetailsForVatFive() throws InterruptedException {
+        switchToBoFrame();
+        Thread.sleep(300);
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("VatFreeGoodsAndServices:ProformaInvoice_input"))).sendKeys(String.valueOf("3000000"));
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFreeGoodsAndServices:Date_input")).click();
+        driver.findElement(By.id("VatFreeGoodsAndServices:Date_input")).sendKeys(Keys.ENTER);
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//*[@id=\"VatFreeGoodsAndServices:DescOfGoods\"]/div[3]")).click();
+        Thread.sleep(500);
+        actions.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(1500);
+        driver.findElement(By.xpath("//*[@id=\"VatFreeGoodsAndServices:Code\"]/div[3]")).click();
+        Thread.sleep(500);
+        actions.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//*[@id=\"VatFreeGoodsAndServices:Unit\"]/div[3]")).click();
+        Thread.sleep(500);
+        actions.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
+        Thread.sleep(500);
+        driver.findElement(By.id("VatFreeGoodsAndServices:UnitPrice_input")).sendKeys("5000");
+        Thread.sleep(500);
+        driver.findElement(By.id("VatFreeGoodsAndServices:Quantity_input")).sendKeys("30");
+        Thread.sleep(500);
+        driver.findElement(By.id("VatFreeGoodsAndServices:Value_input")).sendKeys("2000000");
+        Thread.sleep(500);
+        driver.findElement(By.id("VatFreeGoodsAndServices:VatToBeExempted_input")).sendKeys("0");
+        Thread.sleep(500);
+        driver.findElement(By.id("VatFreeGoodsAndServices:Ok")).click();
+        switchToDefault();
+        wait(35).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[text()='Cement']"))).isDisplayed();
+    }
+
+
+    @Then("Enter procedue code number")
+    public void enterProcedueCodeNumber() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:GoodsEligibleEntryUnderCustoms_input")).sendKeys("46");
+    }
+
+    @Then("Enter exclusive use for")
+    public void enterExclusiveUseFor() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:ForExclusiveUse")).sendKeys("Malawi");
+    }
+
+    @Then("Enter place of use")
+    public void enterPlaceOfUse() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:Placeofuse")).sendKeys("Malawi");
+    }
+
+    @Then("Enter physical address")
+    public void enterPhysicalAddress() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:PhysicalAddress")).sendKeys("Malawi");
+    }
+
+    @Then("Enter amount paid")
+    public void enterAmountPaid() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:AmountPaid_input")).sendKeys("50000");
+    }
+
+    @Then("Enter receipt number")
+    public void enterReceiptNumber() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:RecieptNumber")).sendKeys(getRandom(5));
+    }
+
+    @Then("Select bills of quantities certified for vat five")
+    public void selectBillsOfQuantitiesCertifiedForVatFive() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.xpath("//*[@id=\"VatFiveTaxCertificateApplication:BillsofQuantityCertified\"]/div[3]")).click();
+        Thread.sleep(800);
+        driver.findElement(By.xpath("//li[text()='Yes']")).click();
+    }
+
+    @Then("Select bills of quantities certified by {string}")
+    public void selectBillsOfQuantitiesCertifiedBy(String arg0) throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:findTin")).click();
+        switchToBoFrame();
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("SearchForm:accountNumber"))).sendKeys(arg0);
+        Thread.sleep(100);
+        driver.findElement(By.xpath("//button[span='Search']")).click();
+        Thread.sleep(3000);
+        switchToDefault();
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:Qualifications")).sendKeys("Accountant");
+    }
+
+    @Then("Add attachment details for vat five")
+    public void addAttachmentDetailsForVatFive() throws InterruptedException {
+        Thread.sleep(300);
+        driver.findElement(By.xpath("//*[@id=\"VatFiveTaxCertificateApplication:DocumentType\"]/div[3]")).click();
+        Thread.sleep(500);
+        driver.findElement(By.xpath("//li[text()='National ID or Passport of Authorising']")).click();
+        Thread.sleep(300);
+        String path = System.getProperty("user.dir") + File.separator + "src\\test\\resources\\" + File.separator + "test.png";
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:AttachmentPath_input")).sendKeys(path);
+        Thread.sleep(300);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:DocReference")).sendKeys(getRandom(5));
+        Thread.sleep(300);
+    }
+
+    @Then("Enter details of person authorizing application")
+    public void enterDetailsOfPersonAuthorizingApplication() throws InterruptedException {
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:FullName")).sendKeys("Mr John Kimathi");
+        Thread.sleep(200);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:Designation")).sendKeys("Software Engineer");
+        Thread.sleep(200);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:IdentificationNumber")).sendKeys(getRandom(8));
+    }
+
+    @Then("Enter details of person making application for vat five")
+    public void enterDetailsOfPersonMakingApplicationForVatFive() throws InterruptedException {
+        Thread.sleep(200);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:PersonName")).sendKeys("Margie Wambui");
+        Thread.sleep(200);
+        driver.findElement(By.id("VatFiveTaxCertificateApplication:PersonDesig")).sendKeys("Doctor");
+        Thread.sleep(200);
+        WebElement date = driver.findElement(By.id("VatFiveTaxCertificateApplication:PersonDate_input"));
+        date.click();
+        date.sendKeys(Keys.ENTER);
+        Thread.sleep(100);
+        actions.sendKeys(Keys.TAB).perform();
+        Thread.sleep(200);
+    }
+
+    @Then("Submit vat five project application")
+    public void submitVatFiveProjectApplication() {
+        driver.findElement(By.xpath("//button[span='Submit']")).click();
+    }
+
+    @Then("Obtain reference number for VAT FIVE {string}")
+    public void obtainReferenceNumberForVATFIVE(String arg0) {
+        String FullMessage = driver.findElement(By.xpath("//span[contains(text(),'" + arg0 + "')]")).getText();
+        System.out.println(FullMessage);
+        //Processing Completed - Reference Number - MRA/BAL/CR/004741
+        sharedatastep.VatFiveRef = FullMessage.substring(42);
+        System.out.println(sharedatastep.VatFiveRef);
+    }
+
+    @And("enters VAT FIVE certificate reference number in search results")
+    public void entersVATFIVECertificateReferenceNumberInSearchResults() throws InterruptedException {
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        WebElement search = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("crmGrid_findCriteria")));
+
+        search.clear();
+        Thread.sleep(1000);
+
+//        search.sendKeys("*VF00000061");
+        search.sendKeys("*"+sharedatastep.VatFiveRef);
+        Thread.sleep(5000);
+        search.sendKeys(Keys.ENTER);
+
+        Thread.sleep(1000);
+    }
+
+    @Then("Click cancel project")
+    public void clickCancelProject() {
+        driver.findElement(By.xpath("//button[span='Cancel Project']")).click();
+    }
+
+    @Then("Select cancellation reason as {string}")
+    public void selectCancellationReasonAs(String arg0) throws InterruptedException {
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"VatFreeProject:CancelReason\"]/div[3]"))).click();
+        Thread.sleep(600);
+        driver.findElement(By.xpath("//li[text()='"+arg0+"']")).click();
     }
 }
 

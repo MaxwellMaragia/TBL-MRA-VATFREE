@@ -8,7 +8,9 @@ Feature: Review by Tech officer
     And click on Queues
     Then switch to frame0
     And enters VAT FREE reference number in search results
-    Then click pick button dropdown
+    And click checkbox in case number
+    Then pick the case
+    Then switch to frame0
     Then Click on reference number
     Then VAT FREE status should be "Pending Review"
     Then switch to frame1
