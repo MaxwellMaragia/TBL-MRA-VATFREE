@@ -11,6 +11,7 @@ import io.cucumber.junit.Cucumber;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -37,6 +38,7 @@ public class stepDefinitions extends BaseClass  {
     public static sharedatastep sharedata;
     public String ReferenceNumber = "MANP/000002433/2020";
     Faker faker = new Faker();
+    public JavascriptExecutor jse;
 
 
     public stepDefinitions(sharedatastep sharedata) {
@@ -319,7 +321,7 @@ public class stepDefinitions extends BaseClass  {
         System.out.println("Project name: "+sharedatastep.ProjectName);
         driver.findElement(By.id("VatFreeProjectApplication:ProjectName")).sendKeys(sharedatastep.ProjectName);
         Thread.sleep(300);
-        driver.findElement(By.id("VatFreeProjectApplication:ValueOfProject_input")).sendKeys("2000000");
+        driver.findElement(By.id("VatFreeProjectApplication:ValueOfProject_input")).sendKeys("5000000");
         Thread.sleep(300);
         driver.findElement(By.id("VatFreeProjectApplication:ValueOfExemptedPuchases_input")).sendKeys("0");
         Thread.sleep(3000);
@@ -359,7 +361,7 @@ public class stepDefinitions extends BaseClass  {
         Thread.sleep(500);
         driver.findElement(By.id("VatFreeItem:Quantity_input")).sendKeys("1000");
         Thread.sleep(500);
-        driver.findElement(By.id("VatFreeItem:Value_input")).sendKeys("2000000");
+        driver.findElement(By.id("VatFreeItem:Value_input")).sendKeys("5000000");
         Thread.sleep(500);
         driver.findElement(By.id("VatFreeItem:VatToBeExempted_input")).sendKeys("0");
         Thread.sleep(500);
@@ -916,6 +918,122 @@ public class stepDefinitions extends BaseClass  {
         wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"VatFreeProject:CancelReason\"]/div[3]"))).click();
         Thread.sleep(600);
         driver.findElement(By.xpath("//li[text()='"+arg0+"']")).click();
+    }
+
+    @Given("User navigates to portal login screen")
+    public void userNavigatesToPortalLoginScreen() {
+        driver.get(Pro.getProperty("MRA_Portal_URL"));
+    }
+
+    @Then("Enters portal username {string} and password {string} to login")
+    public void entersPortalUsernameAndPasswordToLogin(String arg0, String arg1) {
+        wait(60).until(ExpectedConditions.visibilityOfElementLocated(By.id("id_userName"))).sendKeys(arg0);
+        wait(30).until(ExpectedConditions.visibilityOfElementLocated(By.id("id_password"))).sendKeys(arg1);
+        driver.findElement(By.id("btnSubmit")).click();
+    }
+
+    @And("Navigate to my tax > Vat Free Project Application")
+    public void navigateToMyTaxVatFreeProjectApplication() {
+        WebElement mytax = wait(40).until(ExpectedConditions.elementToBeClickable(By.id("id_btnMyTax")));
+        jse.executeScript("arguments[0].click()", mytax);
+        WebElement certRequest =wait(40).until(ExpectedConditions.elementToBeClickable(By.id("id_btnVatFreeApp")));
+        jse.executeScript("arguments[0].click()", certRequest);
+
+    }
+
+    @Then("Enter portal project owner details with tin {string}")
+    public void enterPortalProjectOwnerDetailsWithTin(String arg0) throws InterruptedException {
+        WebElement tinField = wait(30).until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[1]/div/div/div/tb-input-text[1]/div/div[2]/input")));
+        jse.executeScript("arguments[0].scrollIntoView(true);", tinField);
+        tinField.sendKeys(arg0);
+        Thread.sleep(900);
+    }
+
+    @Then("Enter project owner name as {string}")
+    public void enterProjectOwnerNameAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[1]/div/div/div/tb-input-text[2]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter project owner address as {string}")
+    public void enterProjectOwnerAddressAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[1]/div/div/div/tb-input-text-area/div/div[2]/textarea")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter project owner contact number as {string}")
+    public void enterProjectOwnerContactNumberAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[1]/div/div/div/tb-input-text[3]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter project owner email address as {string}")
+    public void enterProjectOwnerEmailAddressAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[1]/div/div/div/tb-input-text[4]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter project financier details for portal")
+    public void enterProjectFinancierDetailsForPortal() throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[2]/div/div/div/tb-input-text[2]/div/div[2]/input")).sendKeys("Charles Lukoma");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[2]/div/div/div/tb-input-text-area/div/div[2]/textarea")).sendKeys("Kenema, Lilongwe, Central Region, Malawi");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[2]/div/div/div/tb-input-text[3]/div/div[2]/input")).sendKeys("0708665543");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[2]/div/div/div/tb-input-text[4]/div/div[2]/input")).sendKeys("margiewambui45@yahoo.com");
+        Thread.sleep(400);
+    }
+
+    @Then("Enter Contractor tin as {string}")
+    public void enterContractorTinAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[3]/div/div/div/tb-input-text[1]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter Contractor names as {string}")
+    public void enterContractorNamesAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[3]/div/div/div/tb-input-text[2]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter Contractor address as {string}")
+    public void enterContractorAddressAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[3]/div/div/div/tb-input-text-area/div/div[2]/textarea")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter Contractor contact number as {string}")
+    public void enterContractorContactNumberAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[3]/div/div/div/tb-input-text[3]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter Contractor email address as {string}")
+    public void enterContractorEmailAddressAs(String arg0) throws InterruptedException {
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-person-details[3]/div/div/div/tb-input-text[4]/div/div[2]/input")).sendKeys(arg0);
+        Thread.sleep(400);
+    }
+
+    @Then("Enter project details portal")
+    public void enterProjectDetailsPortal() throws InterruptedException {
+        sharedatastep.PortalProjectName = faker.company().name();
+        System.out.println("Project name="+sharedatastep.PortalProjectName);
+        driver.findElement(By.id("id_projectName")).sendKeys(sharedatastep.PortalProjectName);
+        Thread.sleep(400);
+        driver.findElement(By.id("id_projectDescription")).sendKeys("Sales and supplies");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-project-details/div/div/div/tb-png-input-number[1]/div/div[2]/span/input")).sendKeys("2000000");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("/html/body/trips-app/div/app-vat-free-project/div/app-vat-free-application/div/div/div[1]/form/app-project-details/div/div/div/tb-png-input-number[2]/div/div[2]/span/input")).sendKeys("0");
+        Thread.sleep(400);
+        driver.findElement(By.xpath("id_projectDuration")).sendKeys("5");
+    }
+
+    @Then("Upload goods and services details template")
+    public void uploadGoodsAndServicesDetailsTemplate() {
+
+
     }
 }
 
